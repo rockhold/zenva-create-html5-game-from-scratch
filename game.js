@@ -12,7 +12,7 @@ var player1 = new Player();
 //var enemies = [];
 //var numEnemies = 5;
 
-//var obstacles = [];
+var obstacles = [];
 
 var isPlaying = false;
 
@@ -38,7 +38,7 @@ function init() {
         checkKey(e, false);
     }, false);
 
-    //defineObstacles();
+    defineObstacles();
 
     //initEnemies();
 
@@ -146,13 +146,64 @@ Player.prototype.checkDirection = function() {
         this.srcX = 70; // Facing West
     }
 
-    //obstacleCollision = this.checkObstacleCollide(newDrawX, newDrawY);
+    obstacleCollision = this.checkObstacleCollide(newDrawX, newDrawY);
 
     if (!obstacleCollision && !outOfBounds(this, newDrawX, newDrawY)) {
         this.drawX = newDrawX;
         this.drawY = newDrawY;
     }
 };
+
+Player.prototype.checkObstacleCollide = function(newDrawX, newDrawY) {
+    var obstacleCounter = 0;
+    var newCenterX = newDrawX + (this.width / 2);
+    var newCenterY = newDrawY + (this.height / 2);
+
+    for (var i = 0; i < obstacles.length; i++) {
+        if (obstacles[i].leftX < newCenterX && newCenterX < obstacles[i].rightX && obstacles[i].topY - 20 <
+            newCenterY && newCenterY < obstacles[i].bottomY - 20) {
+            obstacleCounter = 0;
+        } else {
+            obstacleCounter++;
+        }
+    }
+
+    if (obstacleCounter === obstacles.length) {
+        return false;
+    } else {
+        return true;
+    }
+};
+
+function Obstacle(x, y, w, h) {
+    this.drawX = x;
+    this.drawY = y;
+    this.width = w;
+    this.height = h;
+
+    this.leftX = this.drawX;
+    this.rightX = this.drawX + this.width;
+    this.topY = this.drawY;
+    this.bottomY = this.drawY + this.height;
+}
+
+function defineObstacles() {
+    var treeWidth = 65;
+    var treeHeight = 90;
+    var rockDimensions = 30;
+    var bushHeight = 28;
+
+    obstacles = [new Obstacle(78, 360, treeWidth, treeHeight),
+        new Obstacle(390, 395, treeWidth, treeHeight),
+        new Obstacle(415, 102, treeWidth, treeHeight),
+        new Obstacle(619, 184, treeWidth, treeHeight),
+        new Obstacle(97, 63, rockDimensions, rockDimensions),
+        new Obstacle(296, 379, rockDimensions, rockDimensions),
+        new Obstacle(295, 25, 150, bushHeight),
+        new Obstacle(570, 138, 150, bushHeight),
+        new Obstacle(605, 492, 90, bushHeight)
+    ];
+}
 
 function checkKey(e, value) {
     var keyID = e.keyCode || e.which;
